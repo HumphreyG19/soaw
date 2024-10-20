@@ -2,11 +2,10 @@
   "name": "soaw-portal",
   "version": "1.0.0",
   "description": "SOAW team portal",
-  "main": "index.js",
-  "dependencies": {},
-  "devDependencies": {},
+  "main": "app.js",
   "scripts": {
-    "start": "your-start-command-here",
-    "build": "your-build-command-here"
-  }
+    "start": "node app.js"
+  },
+  "dependencies": {},
+  "devDependencies": {}
 }

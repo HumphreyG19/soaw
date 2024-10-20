@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>POVO - SOAW Portal</title>
+</head>
+<body>
+  <header>
+    <h1>Incoming and Outgoing Mail (POVO)</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="calendar.html">Calendar</a></li>
+        <li><a href="todo.html">To Do List</a></li>
+        <li><a href="files.html">Files</a></li>
+        <li><a href="tickets.html">Tickets</a></li>
+        <li><a href="agenda.html">Agenda Point</a></li>
+        <li><a href="newspaper.html">Newspapers</a></li>
+        <li><a href="contacts.html">Contacts</a></li>
+        <li><a href="povo.html">KB POVO</a></li>
+        <li><a href="login.html">Log Out</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <h2>Manage Mail/Stuk/Omslagen</h2>
+    <form id="povo-form">
+      <label for="direction">Direction:</label>
+      <select id="direction" required>
+        <option value="incoming">Incoming</option>
+        <option value="outgoing">Outgoing</option>
+      </select>
+
+      <label for="from-to">From/To:</label>
+      <input type="text" id="from-to" placeholder="Enter the sender or recipient" required>
+
+      <label for="date">Date:</label>
+      <input type="date" id="date" required>
+
+      <label for="handledBy">Handled By:</label>
+      <input type="text" id="handledBy" placeholder="Who sent/received it" required>
+
+      <label for="assignedTo">Assigned To:</label>
+      <select id="assignedTo" required>
+        <option value="Jason">Jason</option>
+        <option value="Soraida">Soraida</option>
+        <option value="Hubert">Hubert</option>
+        <option value="Aravinda">Aravinda</option>
+        <option value="Thaviana">Thaviana</option>
+        <option value="Igmarie">Igmarie</option>
+        <option value="Humphrey">Humphrey</option>
+      </select>
+
+      <button type="submit">Add Mail Entry</button>
+    </form>
+
+    <div id="povo-list">
+      <h3>Mail Entries</h3>
+      <ul id="povo-entries"></ul>
+    </div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

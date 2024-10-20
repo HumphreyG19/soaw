@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Agenda - SOAW Portal</title>
+</head>
+<body>
+  <header>
+    <h1>SOAW Agenda</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="calendar.html">Calendar</a></li>
+        <li><a href="todo.html">To Do List</a></li>
+        <li><a href="files.html">Files</a></li>
+        <li><a href="tickets.html">Tickets</a></li>
+        <li><a href="agenda.html">Agenda Point</a></li>
+        <li><a href="newspaper.html">Newspapers</a></li>
+        <li><a href="contacts.html">Contacts</a></li>
+        <li><a href="povo.html">KB POVO</a></li>
+        <li><a href="login.html">Log Out</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <h2>Agenda Point Notes</h2>
+    <form id="agenda-form">
+      <label for="agenda-point">Agenda Point:</label>
+      <textarea id="agenda-point" required></textarea>
+      <button type="submit">Add Note</button>
+    </form>
+    <div id="agenda-list">
+      <h3>Agenda List</h3>
+      <ul id="agendas"></ul>
+    </div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

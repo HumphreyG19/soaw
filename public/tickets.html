@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Tickets - SOAW Portal</title>
+</head>
+<body>
+  <header>
+    <h1>SOAW Tickets</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="calendar.html">Calendar</a></li>
+        <li><a href="todo.html">To Do List</a></li>
+        <li><a href="files.html">Files</a></li>
+        <li><a href="tickets.html">Tickets</a></li>
+        <li><a href="agenda.html">Agenda Point</a></li>
+        <li><a href="newspaper.html">Newspapers</a></li>
+        <li><a href="contacts.html">Contacts</a></li>
+        <li><a href="povo.html">KB POVO</a></li>
+        <li><a href="login.html">Log Out</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <h2>Manage Tickets</h2>
+    <form id="ticket-form">
+      <label for="caseBy">Case By:</label>
+      <select id="caseBy" required>
+        <option value="Jason">Jason</option>
+        <option value="Soraida">Soraida</option>
+        <option value="Hubert">Hubert</option>
+        <option value="Aravinda">Aravinda</option>
+        <option value="Thaviana">Thaviana</option>
+        <option value="Igmarie">Igmarie</option>
+        <option value="Humphrey">Humphrey</option>
+      </select>
+
+      <label for="department">Department:</label>
+      <select id="department" required>
+        <option value="SO">SO</option>
+        <option value="FJ">FJ</option>
+        <option value="ARB">ARB</option>
+      </select>
+
+      <label for="firstName">First Name:</label>
+      <input type="text" id="firstName" required>
+      
+      <label for="lastName">Last Name:</label>
+      <input type="text" id="lastName" required>
+
+      <label for="idNumber">ID Number:</label>
+      <input type="text" id="idNumber" required>
+
+      <label for="address">Address:</label>
+      <input type="text" id="address" required>
+
+      <label for="notes">Notes:</label>
+      <textarea id="notes"></textarea>
+
+      <label for="status">Status:</label>
+      <select id="status" required>
+        <option value="Not Started">Not Started</option>
+        <option value="In Progress">In Progress</option>
+        <option value="On Hold">On Hold</option>
+        <option value="Completed">Completed</option>
+      </select>
+
+      <button type="submit">Add Ticket</button>
+    </form>
+    
+    <div id="ticket-list">
+      <h3>Ticket List</h3>
+      <ul id="tickets"></ul>
+    </div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

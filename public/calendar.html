@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.js"></script>
+  <title>Calendar - SOAW Portal</title>
+</head>
+<body>
+  <header>
+    <h1>SOAW Calendar</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="calendar.html">Calendar</a></li>
+        <li><a href="todo.html">To Do List</a></li>
+        <li><a href="files.html">Files</a></li>
+        <li><a href="tickets.html">Tickets</a></li>
+        <li><a href="agenda.html">Agenda Point</a></li>
+        <li><a href="newspaper.html">Newspapers</a></li>
+        <li><a href="contacts.html">Contacts</a></li>
+        <li><a href="povo.html">KB POVO</a></li>
+        <li><a href="login.html">Log Out</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <h2>Team Calendar</h2>
+    <p>Select a member to view their calendar:</p>
+
+    <!-- Member Selection Dropdown -->
+    <select id="member-select">
+      <option value="Jason">Jason</option>
+      <option value="Soraida">Soraida</option>
+      <option value="Hubert">Hubert</option>
+      <option value="Aravinda">Aravinda</option>
+      <option value="Thaviana">Thaviana</option>
+      <option value="Igmarie">Igmarie</option>
+      <option value="Humphrey">Humphrey</option>
+    </select>
+
+    <!-- Display selected member's calendar -->
+    <section id="calendar-section">
+      <h3 id="selected-member">Calendar for Jason</h3>
+      <div id="calendar"></div>
+    </section>
+
+    <!-- Import/Export Section -->
+    <section class="calendar-controls">
+      <h3>Import & Export Calendar Events</h3>
+
+      <!-- Export Button -->
+      <button id="export-button">Export Calendar Events (CSV)</button>
+
+<!-- Import Form -->
+<form id="import-form">
+  <label for="import-file">Import Events (CSV or ICS):</label>
+  <input type="file" id="import-file" accept=".csv, .ics" required>
+  <button type="submit">Import Events</button>
+</form>
+
+    </section>
+  </main>
+
+  <!-- Link to JavaScript File -->
+  <script src="app.js"></script>
+</body>
+</html>

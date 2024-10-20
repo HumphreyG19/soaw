@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Newspapers - SOAW Portal</title>
+</head>
+<body>
+  <header>
+    <h1>SOAW Newspapers</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="calendar.html">Calendar</a></li>
+        <li><a href="todo.html">To Do List</a></li>
+        <li><a href="files.html">Files</a></li>
+        <li><a href="tickets.html">Tickets</a></li>
+        <li><a href="agenda.html">Agenda Point</a></li>
+        <li><a href="newspaper.html">Newspapers</a></li>
+        <li><a href="contacts.html">Contacts</a></li>
+        <li><a href="povo.html">KB POVO</a></li>
+        <li><a href="login.html">Log Out</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <h2>Upload Newspaper</h2>
+    <form id="newspaper-upload-form">
+      <label for="upload-date">Select Date:</label>
+      <input type="date" id="upload-date" required>
+
+      <label for="newspaper-file">Choose a file:</label>
+      <input type="file" id="newspaper-file" accept="image/*" required>
+
+      <button type="submit">Upload Newspaper</button>
+    </form>
+
+    <h2>Browse by Month</h2>
+    <div id="months">
+      <!-- Monthly sections will be dynamically generated here -->
+    </div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

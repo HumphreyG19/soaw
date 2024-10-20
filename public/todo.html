@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Task Management - SOAW Portal</title>
+</head>
+<body>
+  <header>
+    <h1>Task Management</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="calendar.html">Calendar</a></li>
+        <li><a href="todo.html">To Do List</a></li>
+        <li><a href="files.html">Files</a></li>
+        <li><a href="tickets.html">Tickets</a></li>
+        <li><a href="agenda.html">Agenda Point</a></li>
+        <li><a href="newspaper.html">Newspapers</a></li>
+        <li><a href="contacts.html">Contacts</a></li>
+        <li><a href="povo.html">KB POVO</a></li>
+        <li><a href="login.html">Log Out</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <h2>Task Assignment</h2>
+    <form id="task-form">
+      <label for="member">Assign to Member:</label>
+      <select id="member" required>
+        <option value="Jason">Jason</option>
+        <option value="Soraida">Soraida</option>
+        <option value="Hubert">Hubert</option>
+        <option value="Aravinda">Aravinda</option>
+        <option value="Thaviana">Thaviana</option>
+        <option value="Igmarie">Igmarie</option>
+        <option value="Humphrey">Humphrey</option>
+      </select>
+
+      <label for="description">Task Description:</label>
+      <textarea id="description" required></textarea>
+
+      <label for="start-date">Start Date:</label>
+      <input type="date" id="start-date" required>
+
+      <label for="end-date">End Date:</label>
+      <input type="date" id="end-date" required>
+
+      <label for="progress">Current Progress:</label>
+      <select id="progress" required>
+        <option value="Not Started">Not Started</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+      </select>
+
+      <label for="notes">Notes:</label>
+      <textarea id="notes"></textarea>
+
+      <button type="submit">Add Task</button>
+    </form>
+
+    <h2>Task List</h2>
+    <ul id="task-list"></ul>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

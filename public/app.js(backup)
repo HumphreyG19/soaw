@@ -1,0 +1,158 @@
+import { getStorage, ref, uploadBytes, getDownloadURL, listAll } from "firebase/storage";
+import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "./firebaseConfig.js";
+
+const storage = getStorage();
+const db = getFirestore();
+
+// Helper Function to Clear and Display Items
+const clearAndDisplayItems = (container, items, renderFunc) => {
+  container.innerHTML = ''; // Clear the current container
+  items.forEach(renderFunc); // Render each item using a given function
+};
+
+// --- File Upload Section ---
+const uploadForm = document.getElementById('upload-form');
+const fileList = document.getElementById('files');
+
+// --- Contact Section ---
+const contactForm = document.getElementById('contact-form');
+const contactList = document.getElementById('contacts');
+
+// --- Ticket Section ---
+const ticketForm = document.getElementById('ticket-form');
+const ticketList = document.getElementById('tickets');
+
+// --- Agenda Section ---
+const agendaForm = document.getElementById('agenda-form');
+const agendaList = document.getElementById('agendas');
+
+// --- Newspaper Upload Section ---
+const newspaperUploadForm = document.getElementById('newspaper-upload-form');
+const newspaperGallery = document.getElementById('newspaper-images');
+
+// --- POVO (Mail) Section ---
+const povoForm = document.getElementById('povo-form');
+const povoList = document.getElementById('povo-entries');
+
+// --- Task Management Section ---
+const taskForm = document.getElementById('task-form');
+const taskList = document.getElementById('task-list');
+
+// --- Folder and File Management ---
+const folderForm = document.getElementById('folder-form');
+const folderSelect = document.getElementById('folder-select');
+
+// --- Display Functions ---
+const displayFiles = (folderName = '') => {
+  const filesRef = folderName ? ref(storage, `folders/${folderName}/`) : ref(storage, 'files/');
+  listAll(filesRef).then((res) => {
+    clearAndDisplayItems(fileList, res.items, (itemRef) => {
+      getDownloadURL(itemRef).then((url) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<a href="${url}" target="_blank">${itemRef.name}</a>`;
+        fileList.appendChild(li);
+      });
+    });
+  }).catch((error) => console.error('Error fetching files:', error));
+};
+
+const displayContacts = () => {
+  getDocs(collection(db, 'contacts')).then((snapshot) => {
+    clearAndDisplayItems(contactList, snapshot.docs, (doc) => {
+      const contact = doc.data();
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <strong>${contact.name}</strong> (${contact.department})<br>
+        <em>Phone:</em> ${contact.phone} | <em>Email:</em> ${contact.email}<br>
+        <em>Address:</em> ${contact.address}
+      `;
+      contactList.appendChild(li);
+    });
+  }).catch((error) => console.error('Error fetching contacts:', error));
+};
+
+const displayTickets = () => {
+  getDocs(collection(db, 'tickets')).then((snapshot) => {
+    clearAndDisplayItems(ticketList, snapshot.docs, (doc) => {
+      const ticket = doc.data();
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <strong>${ticket.caseBy}</strong>: ${ticket.firstName} ${ticket.lastName} 
+        (${ticket.department}) <br>
+        <em>ID:</em> ${ticket.idNumber}, <em>Address:</em> ${ticket.address} <br>
+        <strong>Status:</strong> ${ticket.status} <br>
+        <small>${ticket.notes}</small>
+      `;
+      ticketList.appendChild(li);
+    });
+  }).catch((error) => console.error('Error fetching tickets:', error));
+};
+
+const displayAgendas = () => {
+  getDocs(collection(db, 'agendas')).then((snapshot) => {
+    clearAndDisplayItems(agendaList, snapshot.docs, (doc) => {
+      const agenda = doc.data();
+      const li = document.createElement('li');
+      li.textContent = `${agenda.agendaPoint}`;
+      agendaList.appendChild(li);
+    });
+  }).catch((error) => console.error('Error fetching agendas:', error));
+};
+
+const displayNewspapers = () => {
+  const newspapersRef = ref(storage, 'newspapers/');
+  listAll(newspapersRef).then((res) => {
+    clearAndDisplayItems(newspaperGallery, res.items, (itemRef) => {
+      getDownloadURL(itemRef).then((url) => {
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = itemRef.name;
+        img.className = 'newspaper-img';
+        newspaperGallery.appendChild(img);
+      });
+    });
+  }).catch((error) => console.error('Error fetching newspapers:', error));
+};
+
+const displayMailEntries = () => {
+  getDocs(collection(db, 'mail')).then((snapshot) => {
+    clearAndDisplayItems(povoList, snapshot.docs, (doc) => {
+      const mail = doc.data();
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <strong>${mail.direction === 'incoming' ? 'From' : 'To'}:</strong> ${mail.fromTo} <br>
+        <em>Date:</em> ${mail.date} | <em>Handled By:</em> ${mail.handledBy} <br>
+        <em>Assigned To:</em> ${mail.assignedTo}
+      `;
+      povoList.appendChild(li);
+    });
+  }).catch((error) => console.error('Error fetching mail entries:', error));
+};
+
+const displayTasks = () => {
+  getDocs(collection(db, 'tasks')).then((snapshot) => {
+    clearAndDisplayItems(taskList, snapshot.docs, (doc) => {
+      const task = doc.data();
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <strong>${task.member}</strong>: ${task.description} <br>
+        <em>${task.startDate} to ${task.endDate}</em> - <strong>${task.progress}</strong> <br>
+        <small>${task.notes}</small>
+      `;
+      taskList.appendChild(li);
+    });
+  }).catch((error) => console.error('Error fetching tasks:', error));
+};
+
+// --- Initialize on Load ---
+window.onload = () => {
+  displayFiles();
+  displayContacts();
+  displayTickets();
+  displayAgendas();
+  displayNewspapers();
+  displayTasks();
+  displayMailEntries();
+};

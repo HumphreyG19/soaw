@@ -16,37 +16,8 @@ const clearAndDisplayItems = (container, items, renderFunc) => {
 const uploadForm = document.getElementById('upload-form');
 const fileList = document.getElementById('files');
 
-// --- Contact Section ---
-const contactForm = document.getElementById('contact-form');
-const contactList = document.getElementById('contacts');
-
-// --- Ticket Section ---
-const ticketForm = document.getElementById('ticket-form');
-const ticketList = document.getElementById('tickets');
-
-// --- Agenda Section ---
-const agendaForm = document.getElementById('agenda-form');
-const agendaList = document.getElementById('agendas');
-
-// --- Newspaper Upload Section ---
-const newspaperUploadForm = document.getElementById('newspaper-upload-form');
-const newspaperGallery = document.getElementById('newspaper-images');
-
-// --- POVO (Mail) Section ---
-const povoForm = document.getElementById('povo-form');
-const povoList = document.getElementById('povo-entries');
-
-// --- Task Management Section ---
-const taskForm = document.getElementById('task-form');
-const taskList = document.getElementById('task-list');
-
-// --- Folder and File Management ---
-const folderForm = document.getElementById('folder-form');
-const folderSelect = document.getElementById('folder-select');
-
-// --- Display Functions ---
-const displayFiles = (folderName = '') => {
-  const filesRef = folderName ? ref(storage, `folders/${folderName}/`) : ref(storage, 'files/');
+const displayFiles = () => {
+  const filesRef = ref(storage, 'files/');
   listAll(filesRef).then((res) => {
     clearAndDisplayItems(fileList, res.items, (itemRef) => {
       getDownloadURL(itemRef).then((url) => {
@@ -58,19 +29,385 @@ const displayFiles = (folderName = '') => {
   }).catch((error) => console.error('Error fetching files:', error));
 };
 
+if (uploadForm) {
+  uploadForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const file = document.getElementById('file').files[0];
+    const storageRef = ref(storage, 'files/' + file.name);
+
+    uploadBytes(storageRef, file).then(() => {
+      alert('File uploaded successfully!');
+      displayFiles(); // Refresh file list after upload
+    }).catch((error) => console.error('Error uploading file:', error));
+  });
+}
+
+// --- Contacts Section ---
+const contactForm = document.getElementById('contact-form');
+const contactList = document.getElementById('contacts');
+
 const displayContacts = () => {
   getDocs(collection(db, 'contacts')).then((snapshot) => {
     clearAndDisplayItems(contactList, snapshot.docs, (doc) => {
       const contact = doc.data();
       const li = document.createElement('li');
-      li.innerHTML = `
-        <strong>${contact.name}</strong> (${contact.department})<br>
-        <em>Phone:</em> ${contact.phone} | <em>Email:</em> ${contact.email}<br>
-        <em>Address:</em> ${contact.address}
-      `;
+      li.textContent = `${contact.name} - ${contact.phone} - ${contact.email}`;
       contactList.appendChild(li);
     });
   }).catch((error) => console.error('Error fetching contacts:', error));
+};
+
+if (contactForm) {
+  contactForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('name').value;
+    const phone = document.getElementById('phone').value;
+    const email = document.getElementById('email').value;
+
+    addDoc(collection(db, 'contacts'), { name, phone, email }).then(() => {
+      alert('Contact added successfully!');
+      displayContacts(); // Refresh contact list after adding
+      contactForm.reset(); // Clear form inputs
+    }).catch((error) => console.error('Error adding contact:', error));
+  });
+}
+
+// --- Tickets Section ---
+const ticketForm = document.getElementById('ticket-form');
+const ticketList = document.getElementById('tickets');
+
+const displayTickets = () => {
+  getDocs(collection(db, 'tickets')).then((snapshot) => {
+    clearAndDisplayItems(ticketList, snapshot.docs, (doc) => {
+      const ticket = doc.data();
+      const li = document.createElement('li');
+      li.textContent = `${ticket.caseBy} - ${ticket.department} - ${ticket.firstName} ${ticket.lastName}`;
+      ticketList.appendChild(li);
+    });
+  }).catch((error) => console.error('Error fetching tickets:', error));
+};
+
+if (ticketForm) {
+  ticketForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const ticketData = {
+      caseBy: document.getElementById('caseBy').value,
+      department: document.getElementById('department').value,
+      firstName: document.getElementById('firstName').value,
+      lastName: document.getElementById('lastName').value,
+      idNumber: document.getElementById('idNumber').value,
+      address: document.getElementById('address').value,
+      notes: document.getElementById('notes').value
+    };
+
+    addDoc(collection(db, 'tickets'), ticketData).then(() => {
+      alert('Ticket added successfully!');
+      displayTickets(); // Refresh ticket list after adding
+      ticketForm.reset(); // Clear form inputs
+    }).catch((error) => console.error('Error adding ticket:', error));
+  });
+}
+
+// --- Agenda Section ---
+const agendaForm = document.getElementById('agenda-form');
+const agendaList = document.getElementById('agendas');
+
+const displayAgendas = () => {
+  getDocs(collection(db, 'agendas')).then((snapshot) => {
+    clearAndDisplayItems(agendaList, snapshot.docs, (doc) => {
+      const agenda = doc.data();
+      const li = document.createElement('li');
+      li.textContent = `${agenda.agendaPoint}`;
+      agendaList.appendChild(li);
+    });
+  }).catch((error) => console.error('Error fetching agendas:', error));
+};
+
+if (agendaForm) {
+  agendaForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const agendaPoint = document.getElementById('agenda-point').value;
+
+    addDoc(collection(db, 'agendas'), { agendaPoint }).then(() => {
+      alert('Agenda Point added successfully!');
+      displayAgendas(); // Refresh agenda list after adding
+      agendaForm.reset(); // Clear form inputs
+    }).catch((error) => console.error('Error adding agenda point:', error));
+  });
+}
+
+// --- Newspaper Upload Section ---
+const newspaperUploadForm = document.getElementById('newspaper-upload-form');
+const newspaperGallery = document.getElementById('newspaper-images');
+
+const displayNewspapers = () => {
+  const newspapersRef = ref(storage, 'newspapers/');
+  listAll(newspapersRef).then((res) => {
+    clearAndDisplayItems(newspaperGallery, res.items, (itemRef) => {
+      getDownloadURL(itemRef).then((url) => {
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = itemRef.name;
+        img.className = 'newspaper-img';
+        newspaperGallery.appendChild(img);
+      });
+    });
+  }).catch((error) => console.error('Error fetching newspapers:', error));
+};
+
+if (newspaperUploadForm) {
+  newspaperUploadForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const newspaperFile = document.getElementById('newspaper-file').files[0];
+    const storageRef = ref(storage, 'newspapers/' + newspaperFile.name);
+
+    uploadBytes(storageRef, newspaperFile).then(() => {
+      alert('Newspaper uploaded successfully!');
+      displayNewspapers(); // Refresh gallery after upload
+    }).catch((error) => console.error('Error uploading newspaper:', error));
+  });
+}
+
+// --- Authentication and Authorization ---
+const signupForm = document.getElementById('signup-form');
+if (signupForm) {
+  signupForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('signup-email').value;
+    const password = document.getElementById('signup-password').value;
+
+    createUserWithEmailAndPassword(auth, email, password).then(() => {
+      alert('Account created successfully!');
+      window.location.href = "login.html"; // Redirect to login page
+    }).catch((error) => console.error('Error creating account:', error));
+  });
+}
+
+const loginForm = document.getElementById('login-form');
+if (loginForm) {
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    signInWithEmailAndPassword(auth, email, password).then(() => {
+      window.location.href = "index.html"; // Redirect to homepage after login
+    }).catch((error) => {
+      console.error('Error logging in:', error);
+      alert('Invalid login credentials.');
+    });
+  });
+}
+
+onAuthStateChanged(auth, (user) => {
+  const protectedPages = ['index.html', 'calendar.html', 'todo.html', 'files.html', 'contacts.html', 'tickets.html', 'agenda.html', 'newspaper.html'];
+  const currentPath = window.location.pathname.split('/').pop();
+
+  if (!user && protectedPages.includes(currentPath)) {
+    alert('You need to log in to access this page.');
+    window.location.href = "login.html";
+  }
+});
+
+const logoutButton = document.querySelector('a[href="login.html"]');
+if (logoutButton) {
+  logoutButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    signOut(auth).then(() => {
+      alert('Logged out successfully.');
+      window.location.href = "login.html";
+    }).catch((error) => console.error('Error logging out:', error));
+  });
+}
+
+// --- Combine onLoad Functions ---
+window.onload = () => {
+  displayFiles();
+  displayContacts();
+  displayTickets();
+  displayAgendas();
+  displayNewspapers(); // Include newspapers display call
+};
+
+// Import Calendar Events from CSV or ICS
+const importForm = document.getElementById('import-form');
+importForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const file = document.getElementById('import-file').files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+    if (fileExtension === 'csv') {
+      // Handle CSV Import
+      const text = event.target.result;
+      const rows = text.split('\n').slice(1); // Skip header row
+      const importedEvents = rows.map(row => {
+        const [title, start, end] = row.split(',');
+        return { title, start, end: end || null };
+      });
+
+      const selectedMember = memberSelect.value;
+      memberEvents[selectedMember] = importedEvents; // Update current member's events
+      calendar.removeAllEvents();
+      calendar.addEventSource(importedEvents); // Refresh calendar
+    } else if (fileExtension === 'ics') {
+      // Handle ICS Import using ical.js
+      const parsedEvents = [];
+      const jcalData = ICAL.parse(event.target.result);
+      const comp = new ICAL.Component(jcalData);
+      const vevents = comp.getAllSubcomponents('vevent');
+
+      vevents.forEach((vevent) => {
+        const event = new ICAL.Event(vevent);
+        parsedEvents.push({
+          title: event.summary,
+          start: event.startDate.toString(),
+          end: event.endDate ? event.endDate.toString() : null
+        });
+      });
+
+      const selectedMember = memberSelect.value;
+      memberEvents[selectedMember] = parsedEvents; // Update current member's events
+      calendar.removeAllEvents();
+      calendar.addEventSource(parsedEvents); // Refresh calendar
+    } else {
+      alert('Unsupported file format. Please upload a CSV or ICS file.');
+    }
+  };
+
+  reader.readAsText(file);
+});
+
+// --- Task Management Section ---
+const taskForm = document.getElementById('task-form');
+const taskList = document.getElementById('task-list');
+
+const displayTasks = () => {
+  getDocs(collection(db, 'tasks')).then((snapshot) => {
+    clearAndDisplayItems(taskList, snapshot.docs, (doc) => {
+      const task = doc.data();
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <strong>${task.member}</strong>: ${task.description} <br>
+        <em>${task.startDate} to ${task.endDate}</em> - <strong>${task.progress}</strong> <br>
+        <small>${task.notes}</small>
+      `;
+      taskList.appendChild(li);
+    });
+  }).catch((error) => console.error('Error fetching tasks:', error));
+};
+
+if (taskForm) {
+  taskForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const taskData = {
+      member: document.getElementById('member').value,
+      description: document.getElementById('description').value,
+      startDate: document.getElementById('start-date').value,
+      endDate: document.getElementById('end-date').value,
+      progress: document.getElementById('progress').value,
+      notes: document.getElementById('notes').value
+    };
+
+    addDoc(collection(db, 'tasks'), taskData).then(() => {
+      alert('Task added successfully!');
+      displayTasks(); // Refresh task list after adding
+      taskForm.reset(); // Clear form inputs
+    }).catch((error) => console.error('Error adding task:', error));
+  });
+}
+
+// Combine onLoad Functions to include task display
+window.onload = () => {
+  displayFiles();
+  displayContacts();
+  displayTickets();
+  displayAgendas();
+  displayNewspapers();
+  displayTasks(); // Include task display call
+};
+
+// --- Folder and File Management ---
+const folderForm = document.getElementById('folder-form');
+const folderSelect = document.getElementById('folder-select');
+const uploadForm = document.getElementById('upload-form');
+const fileList = document.getElementById('files');
+
+// Helper function to display folders in the dropdown
+const displayFolders = () => {
+  getDocs(collection(db, 'folders')).then((snapshot) => {
+    clearAndDisplayItems(folderSelect, snapshot.docs, (doc) => {
+      const folder = doc.data();
+      const option = document.createElement('option');
+      option.value = folder.name;
+      option.textContent = folder.name;
+      folderSelect.appendChild(option);
+    });
+  }).catch((error) => console.error('Error fetching folders:', error));
+};
+
+// Helper function to display files in each folder
+const displayFiles = (folderName) => {
+  const filesRef = ref(storage, `folders/${folderName}/`);
+  listAll(filesRef).then((res) => {
+    fileList.innerHTML = ''; // Clear the current list
+    res.items.forEach((itemRef) => {
+      getDownloadURL(itemRef).then((url) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<a href="${url}" target="_blank">${itemRef.name}</a>`;
+        fileList.appendChild(li);
+      });
+    });
+  }).catch((error) => console.error('Error fetching files:', error));
+};
+
+// Create a New Folder
+if (folderForm) {
+  folderForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const folderName = document.getElementById('folder-name').value.trim();
+
+    if (folderName) {
+      // Add folder to Firestore for reference
+      addDoc(collection(db, 'folders'), { name: folderName }).then(() => {
+        alert(`Folder '${folderName}' created successfully!`);
+        folderForm.reset();
+        displayFolders(); // Refresh folder list
+      }).catch((error) => console.error('Error creating folder:', error));
+    }
+  });
+}
+
+// Upload a File to the Selected Folder
+if (uploadForm) {
+  uploadForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const folderName = document.getElementById('folder-select').value;
+    const file = document.getElementById('file').files[0];
+    const storageRef = ref(storage, `folders/${folderName}/${file.name}`);
+
+    uploadBytes(storageRef, file).then(() => {
+      alert(`File uploaded successfully to folder '${folderName}'!`);
+      displayFiles(folderName); // Refresh file list
+      uploadForm.reset();
+    }).catch((error) => console.error('Error uploading file:', error));
+  });
+}
+
+// Event listener to display files when a folder is selected
+folderSelect.addEventListener('change', (e) => {
+  const selectedFolder = e.target.value;
+  if (selectedFolder) {
+    displayFiles(selectedFolder);
+  }
+});
+
+// Initial load to display folders
+window.onload = () => {
+  displayFolders();
+  displayFiles(folderSelect.value); // Display files of the first selected folder
 };
 
 const displayTickets = () => {
@@ -90,31 +427,77 @@ const displayTickets = () => {
   }).catch((error) => console.error('Error fetching tickets:', error));
 };
 
-const displayAgendas = () => {
-  getDocs(collection(db, 'agendas')).then((snapshot) => {
-    clearAndDisplayItems(agendaList, snapshot.docs, (doc) => {
-      const agenda = doc.data();
+if (ticketForm) {
+  ticketForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const ticketData = {
+      caseBy: document.getElementById('caseBy').value,
+      department: document.getElementById('department').value,
+      firstName: document.getElementById('firstName').value,
+      lastName: document.getElementById('lastName').value,
+      idNumber: document.getElementById('idNumber').value,
+      address: document.getElementById('address').value,
+      notes: document.getElementById('notes').value,
+      status: document.getElementById('status').value
+    };
+
+    addDoc(collection(db, 'tickets'), ticketData).then(() => {
+      alert('Ticket added successfully!');
+      displayTickets(); // Refresh ticket list after adding
+      ticketForm.reset(); // Clear form inputs
+    }).catch((error) => console.error('Error adding ticket:', error));
+  });
+}
+// --- Contacts Section ---
+const contactForm = document.getElementById('contact-form');
+const contactList = document.getElementById('contacts');
+
+const displayContacts = () => {
+  getDocs(collection(db, 'contacts')).then((snapshot) => {
+    clearAndDisplayItems(contactList, snapshot.docs, (doc) => {
+      const contact = doc.data();
       const li = document.createElement('li');
-      li.textContent = `${agenda.agendaPoint}`;
-      agendaList.appendChild(li);
+      li.innerHTML = `
+        <strong>${contact.name}</strong> (${contact.department})<br>
+        <em>Phone:</em> ${contact.phone} | <em>Email:</em> ${contact.email}<br>
+        <em>Address:</em> ${contact.address}
+      `;
+      contactList.appendChild(li);
     });
-  }).catch((error) => console.error('Error fetching agendas:', error));
+  }).catch((error) => console.error('Error fetching contacts:', error));
 };
 
-const displayNewspapers = () => {
-  const newspapersRef = ref(storage, 'newspapers/');
-  listAll(newspapersRef).then((res) => {
-    clearAndDisplayItems(newspaperGallery, res.items, (itemRef) => {
-      getDownloadURL(itemRef).then((url) => {
-        const img = document.createElement('img');
-        img.src = url;
-        img.alt = itemRef.name;
-        img.className = 'newspaper-img';
-        newspaperGallery.appendChild(img);
-      });
-    });
-  }).catch((error) => console.error('Error fetching newspapers:', error));
+if (contactForm) {
+  contactForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const contactData = {
+      name: document.getElementById('name').value,
+      phone: document.getElementById('phone').value,
+      email: document.getElementById('email').value,
+      department: document.getElementById('department').value,
+      address: document.getElementById('address').value
+    };
+
+    addDoc(collection(db, 'contacts'), contactData).then(() => {
+      alert('Contact added successfully!');
+      displayContacts(); // Refresh contact list after adding
+      contactForm.reset(); // Clear form inputs
+    }).catch((error) => console.error('Error adding contact:', error));
+  });
+}
+
+// Combine onLoad Functions to include contacts display
+window.onload = () => {
+  displayFiles();
+  displayContacts();
+  displayTickets();
+  displayAgendas();
+  displayNewspapers();
+  displayTasks(); // Include task display call if using tasks
 };
+// --- POVO (Mail) Section ---
+const povoForm = document.getElementById('povo-form');
+const povoList = document.getElementById('povo-entries');
 
 const displayMailEntries = () => {
   getDocs(collection(db, 'mail')).then((snapshot) => {
@@ -131,22 +514,26 @@ const displayMailEntries = () => {
   }).catch((error) => console.error('Error fetching mail entries:', error));
 };
 
-const displayTasks = () => {
-  getDocs(collection(db, 'tasks')).then((snapshot) => {
-    clearAndDisplayItems(taskList, snapshot.docs, (doc) => {
-      const task = doc.data();
-      const li = document.createElement('li');
-      li.innerHTML = `
-        <strong>${task.member}</strong>: ${task.description} <br>
-        <em>${task.startDate} to ${task.endDate}</em> - <strong>${task.progress}</strong> <br>
-        <small>${task.notes}</small>
-      `;
-      taskList.appendChild(li);
-    });
-  }).catch((error) => console.error('Error fetching tasks:', error));
-};
+if (povoForm) {
+  povoForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const mailData = {
+      direction: document.getElementById('direction').value,
+      fromTo: document.getElementById('from-to').value,
+      date: document.getElementById('date').value,
+      handledBy: document.getElementById('handledBy').value,
+      assignedTo: document.getElementById('assignedTo').value
+    };
 
-// --- Initialize on Load ---
+    addDoc(collection(db, 'mail'), mailData).then(() => {
+      alert('Mail entry added successfully!');
+      displayMailEntries(); // Refresh list after adding
+      povoForm.reset(); // Clear form inputs
+    }).catch((error) => console.error('Error adding mail entry:', error));
+  });
+}
+
+// Initial load to display mail entries
 window.onload = () => {
   displayFiles();
   displayContacts();
@@ -154,5 +541,81 @@ window.onload = () => {
   displayAgendas();
   displayNewspapers();
   displayTasks();
-  displayMailEntries();
+  displayMailEntries(); // Include mail entries display call
+};
+// --- Newspaper Upload and Organization ---
+const newspaperUploadForm = document.getElementById('newspaper-upload-form');
+const monthsContainer = document.getElementById('months');
+
+// Helper function to format month names
+const getMonthName = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleString('default', { month: 'long', year: 'numeric' });
+};
+
+// Display newspapers by month
+const displayNewspapersByMonth = () => {
+  const storageRef = ref(storage, 'newspapers/');
+  listAll(storageRef).then((res) => {
+    const monthMap = {};
+
+    // Organize images by month
+    res.items.forEach((itemRef) => {
+      getDownloadURL(itemRef).then((url) => {
+        const fileName = itemRef.name;
+        const month = getMonthName(fileName.split('_')[0]);
+
+        if (!monthMap[month]) {
+          monthMap[month] = [];
+        }
+        monthMap[month].push({ url, fileName });
+      }).then(() => {
+        // Display organized newspapers
+        monthsContainer.innerHTML = ''; // Clear container
+        Object.keys(monthMap).forEach((month) => {
+          const section = document.createElement('section');
+          section.innerHTML = `<h3>${month}</h3>`;
+          const imgContainer = document.createElement('div');
+          imgContainer.classList.add('image-grid');
+
+          monthMap[month].forEach((image) => {
+            const img = document.createElement('img');
+            img.src = image.url;
+            img.alt = image.fileName;
+            imgContainer.appendChild(img);
+          });
+
+          section.appendChild(imgContainer);
+          monthsContainer.appendChild(section);
+        });
+      });
+    });
+  }).catch((error) => console.error('Error fetching newspapers:', error));
+};
+
+// Upload and organize newspapers by date
+if (newspaperUploadForm) {
+  newspaperUploadForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const selectedDate = document.getElementById('upload-date').value;
+    const newspaperFile = document.getElementById('newspaper-file').files[0];
+
+    // Create a file name including the date for sorting
+    const fileName = `${selectedDate}_${newspaperFile.name}`;
+    const storageRef = ref(storage, `newspapers/${fileName}`);
+
+    uploadBytes(storageRef, newspaperFile).then(() => {
+      alert('Newspaper uploaded successfully!');
+      displayNewspapersByMonth(); // Refresh view after upload
+    }).catch((error) => console.error('Error uploading newspaper:', error));
+  });
+}
+
+// Initial load to display newspapers organized by month
+window.onload = () => {
+  displayFiles();
+  displayContacts();
+  displayTickets();
+  displayAgendas();
+  displayNewspapersByMonth(); // Include organized newspaper display
 };

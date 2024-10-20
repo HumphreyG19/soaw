@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "SOAW team portal",
   "main": "index.js",
-  "dependencies": {
-    // ... other dependencies
-  },
-  "devDependencies": {
-    // ... other dev dependencies
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "start": "your-start-command-here",
+    "build": "your-build-command-here"
   }
 }

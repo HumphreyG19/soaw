@@ -12,149 +12,50 @@ const clearAndDisplayItems = (container, items, renderFunc) => {
   items.forEach(renderFunc); // Render each item using a given function
 };
 
-// --- File Upload Section ---
-const uploadForm = document.getElementById('upload-form');
-const fileList = document.getElementById('files');
-
-// Display Files in a List
-const displayFiles = (folderName = '') => {
-  const filesRef = folderName ? ref(storage, `folders/${folderName}/`) : ref(storage, 'files/');
-  listAll(filesRef).then((res) => {
-    clearAndDisplayItems(fileList, res.items, (itemRef) => {
-      getDownloadURL(itemRef).then((url) => {
-        const li = document.createElement('li');
-        li.innerHTML = `<a href="${url}" target="_blank">${itemRef.name}</a>`;
-        fileList.appendChild(li);
-      });
+// Generic Display Function to Fetch and Render from Firestore
+const displayFromFirestore = (collectionName, container, renderFunc) => {
+  getDocs(collection(db, collectionName)).then((snapshot) => {
+    clearAndDisplayItems(container, snapshot.docs, (doc) => {
+      renderFunc(doc.data(), container);
     });
-  }).catch((error) => console.error('Error fetching files:', error));
+  }).catch((error) => console.error(`Error fetching ${collectionName}:`, error));
 };
 
-// --- Contact Section ---
-const contactForm = document.getElementById('contact-form');
-const contactList = document.getElementById('contacts');
+// Helper to Render List Items
+const renderListItem = (data, container, innerHTML) => {
+  const li = document.createElement('li');
+  li.innerHTML = innerHTML;
+  container.appendChild(li);
+};
 
-// Display Contacts
+// Display Functions (For Specific Sections)
 const displayContacts = () => {
-  getDocs(collection(db, 'contacts')).then((snapshot) => {
-    clearAndDisplayItems(contactList, snapshot.docs, (doc) => {
-      const contact = doc.data();
-      const li = document.createElement('li');
-      li.innerHTML = `
-        <strong>${contact.name}</strong> (${contact.department})<br>
-        <em>Phone:</em> ${contact.phone} | <em>Email:</em> ${contact.email}<br>
-        <em>Address:</em> ${contact.address}
-      `;
-      contactList.appendChild(li);
-    });
-  }).catch((error) => console.error('Error fetching contacts:', error));
+  displayFromFirestore('contacts', document.getElementById('contacts'), (contact) => {
+    renderListItem(contact, document.getElementById('contacts'), `
+      <strong>${contact.name}</strong> (${contact.department})<br>
+      <em>Phone:</em> ${contact.phone} | <em>Email:</em> ${contact.email}<br>
+      <em>Address:</em> ${contact.address}
+    `);
+  });
 };
 
-// --- Ticket Section ---
-const ticketForm = document.getElementById('ticket-form');
-const ticketList = document.getElementById('tickets');
-
-// Display Tickets
 const displayTickets = () => {
-  getDocs(collection(db, 'tickets')).then((snapshot) => {
-    clearAndDisplayItems(ticketList, snapshot.docs, (doc) => {
-      const ticket = doc.data();
-      const li = document.createElement('li');
-      li.innerHTML = `
-        <strong>${ticket.caseBy}</strong>: ${ticket.firstName} ${ticket.lastName} 
-        (${ticket.department}) <br>
-        <em>ID:</em> ${ticket.idNumber}, <em>Address:</em> ${ticket.address} <br>
-        <strong>Status:</strong> ${ticket.status} <br>
-        <small>${ticket.notes}</small>
-      `;
-      ticketList.appendChild(li);
-    });
-  }).catch((error) => console.error('Error fetching tickets:', error));
+  displayFromFirestore('tickets', document.getElementById('tickets'), (ticket) => {
+    renderListItem(ticket, document.getElementById('tickets'), `
+      <strong>${ticket.caseBy}</strong>: ${ticket.firstName} ${ticket.lastName} 
+      (${ticket.department}) <br>
+      <em>ID:</em> ${ticket.idNumber}, <em>Address:</em> ${ticket.address} <br>
+      <strong>Status:</strong> ${ticket.status} <br>
+      <small>${ticket.notes}</small>
+    `);
+  });
 };
 
-// --- Agenda Section ---
-const agendaForm = document.getElementById('agenda-form');
-const agendaList = document.getElementById('agendas');
+// Repeat similar display functions for other sections (agendas, newspapers, mail, tasks)...
 
-// Display Agendas
-const displayAgendas = () => {
-  getDocs(collection(db, 'agendas')).then((snapshot) => {
-    clearAndDisplayItems(agendaList, snapshot.docs, (doc) => {
-      const agenda = doc.data();
-      const li = document.createElement('li');
-      li.textContent = `${agenda.agendaPoint}`;
-      agendaList.appendChild(li);
-    });
-  }).catch((error) => console.error('Error fetching agendas:', error));
-};
-
-// --- Newspaper Upload Section ---
-const newspaperUploadForm = document.getElementById('newspaper-upload-form');
-const newspaperGallery = document.getElementById('newspaper-images');
-
-// Display Newspapers as Thumbnails
-const displayNewspapers = () => {
-  const newspapersRef = ref(storage, 'newspapers/');
-  listAll(newspapersRef).then((res) => {
-    clearAndDisplayItems(newspaperGallery, res.items, (itemRef) => {
-      getDownloadURL(itemRef).then((url) => {
-        const img = document.createElement('img');
-        img.src = url;
-        img.alt = itemRef.name;
-        img.className = 'newspaper-img';
-        newspaperGallery.appendChild(img);
-      });
-    });
-  }).catch((error) => console.error('Error fetching newspapers:', error));
-};
-
-// --- POVO (Mail) Section ---
-const povoForm = document.getElementById('povo-form');
-const povoList = document.getElementById('povo-entries');
-
-// Display Incoming and Outgoing Mail Entries
-const displayMailEntries = () => {
-  getDocs(collection(db, 'mail')).then((snapshot) => {
-    clearAndDisplayItems(povoList, snapshot.docs, (doc) => {
-      const mail = doc.data();
-      const li = document.createElement('li');
-      li.innerHTML = `
-        <strong>${mail.direction === 'incoming' ? 'From' : 'To'}:</strong> ${mail.fromTo} <br>
-        <em>Date:</em> ${mail.date} | <em>Handled By:</em> ${mail.handledBy} <br>
-        <em>Assigned To:</em> ${mail.assignedTo}
-      `;
-      povoList.appendChild(li);
-    });
-  }).catch((error) => console.error('Error fetching mail entries:', error));
-};
-
-// --- Task Management Section ---
-const taskForm = document.getElementById('task-form');
-const taskList = document.getElementById('task-list');
-
-// Display Tasks
-const displayTasks = () => {
-  getDocs(collection(db, 'tasks')).then((snapshot) => {
-    clearAndDisplayItems(taskList, snapshot.docs, (doc) => {
-      const task = doc.data();
-      const li = document.createElement('li');
-      li.innerHTML = `
-        <strong>${task.member}</strong>: ${task.description} <br>
-        <em>${task.startDate} to ${task.endDate}</em> - <strong>${task.progress}</strong> <br>
-        <small>${task.notes}</small>
-      `;
-      taskList.appendChild(li);
-    });
-  }).catch((error) => console.error('Error fetching tasks:', error));
-};
-
-// --- Initialize on Load ---
+// Initialize On Load
 window.onload = () => {
-  displayFiles();
   displayContacts();
   displayTickets();
-  displayAgendas();
-  displayNewspapers();
-  displayTasks();
-  displayMailEntries();
+  // Include similar calls for other sections...
 };

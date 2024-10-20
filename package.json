@@ -1,15 +1,12 @@
 {
-  "name": "soaw-website",
+  "name": "soaw-portal",
   "version": "1.0.0",
+  "description": "SOAW team portal",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
-    "firebase": "^10.14.1"
+    // ... other dependencies
+  },
+  "devDependencies": {
+    // ... other dev dependencies
   }
 }
